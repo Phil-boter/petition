@@ -10,7 +10,9 @@ app.set("view engine", "handlebars");
 const {
     getUserdata,
     updateUserData,
-    ifSigned
+    ifSigned,
+    totalSigners,
+    allSigners
 } = require("./db");
 
 
@@ -25,13 +27,13 @@ app.use(express.static("./public"));
 
 
 
-// app.use((req, res, next)=> {
-//     console.log("--------------");
-//     console.log(`${req.method} request coming on route ${req.url}`);
-//     console.log("--------------");
-//     next();
+app.use((req, res, next)=> {
+    console.log("--------------");
+    console.log(`${req.method} request coming on route ${req.url}`);
+    console.log("--------------");
+    next();
 
-// })
+})
 
 
 app.get("/petition", (req, res) => {
@@ -53,10 +55,6 @@ app.post("/petition", (req, res) => {
     console.log("req.body", req.body);
     const { first, last, signature } = req.body;
    
-    // let signature = req.body.signature;
-    // let first = req.body.first;
-    // let last =  req.body.last;
-    
     db.updateUserData(first, last, signature)
         .then(()=>{
             if("authenticated" == false){
@@ -64,9 +62,11 @@ app.post("/petition", (req, res) => {
                 res.redirect("/petition");
 
             }
-            res.cookie("authenticated", true)
-            console.log('req.cookies: ', req.cookies);
-            res.redirect("/thanks");
+          
+                res.cookie("authenticated", true)
+                console.log('req.cookies: ', req.cookies);
+                res.redirect("/thanks");
+            
         })
         .catch((err)=> {
             console.log("error in updateUserData",err)
@@ -78,7 +78,7 @@ app.post("/petition", (req, res) => {
 
 app.get("/thanks", (req, res) => {
     console.log("user requesting GET / thanks");
-    if("authenticated" == false){
+    if("authenticated" == false ){
         res.render("petition",{
             layout: "main",
     });
@@ -90,10 +90,26 @@ app.get("/thanks", (req, res) => {
 
 app.get("/signers", (req, res) => {
     console.log("user requesting GET / signers");
-    res.render("signers",{
-        layout: "main",
-    });
+    const { first, last} = req.body;
+    db.allSigners(first, last)
+        .then(({rows}) => {
+            console.log("result from allSigners:", rows);
+            if("authenticated" == false){
+                res.render("petition",{
+                    layout: "main",
+            });
+            }
+            res.render("signers",{
+                layout: "main",
+            });
+        })
+        .catch((err) => {
+            console.log("Error from allSigners:", err);
+        })
+
 });
+
+
 // app.get("./actors", (req, res)=>{
 //     db.getActors().then((result)=> {
 //         console.log("result from getActors", result.rows);
