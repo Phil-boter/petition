@@ -15,7 +15,7 @@ drawSig.addEventListener("mousedown", e => {
 
 drawSig.addEventListener("mousemove", e => {
     if (isDrawing === true) {
-        drawLine(context, x, y, e.clientX - rect.left, e.clientY - rect.top);
+        drawLine(ctx, x, y, e.clientX - rect.left, e.clientY - rect.top);
         x = e.clientX - rect.left;
         y = e.clientY - rect.top;
     }
@@ -23,14 +23,14 @@ drawSig.addEventListener("mousemove", e => {
 
 window.addEventListener("mouseup", e => {
     if (isDrawing === true) {
-        drawLine(context, x, y, e.clientX - rect.left, e.clientY - rect.top);
+        drawLine(ctx, x, y, e.clientX - rect.left, e.clientY - rect.top);
         x = 0;
         y = 0;
         isDrawing = false;
     }
 });
 
-function drawLine(context, x1, y1, x2, y2) {
+function drawLine(ctx, x1, y1, x2, y2) {
     ctx.beginPath();
     ctx.strokeStyle = "black";
     ctx.lineWidth = 2;

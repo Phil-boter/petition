@@ -28,5 +28,8 @@ exports.getSignature = id => {
     const params = [id];
     return db.query(q, params);
 };
-
-
+exports.getIfSigned = id => {
+    const q =   `SELECT id FROM petition WHERE id = $1`;
+    const params = [id];
+    return db.query(q, params);
+};

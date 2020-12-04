@@ -10,14 +10,6 @@ const hb = require("express-handlebars");
 app.engine("handlebars", hb());
 app.set("view engine", "handlebars");
 
-const {
-    getUserdata,
-    updateUserData,
-    getSignature,
-    totalSigners,
-    allSignersNames
-} = require("./db");
-
 app.use(cookieSession({
     secret: `I'm always angry.`,
     maxAge: 1000 * 60 * 60 * 24 * 14
@@ -28,6 +20,7 @@ app.use(
         extended: false
     })
 );
+
 app.use(csurf()); 
 
 app.use(function (req, res, next) {
@@ -58,66 +51,74 @@ app.get("/", (req,res) => {
 });
 
 
-app.get("/petition", (req, res) => {
-    console.log("user requesting GET / petition");
-    console.log('req.session in petition route: ',req.session.regId);
-        if (req.session.registered == true) {
-                res.redirect("/thanks");
-                } 
-                else {
-                    res.render("petition");
-                }
-});
+app.get("/petition", (req,res)=> {
+    if(req.session.signed == "true") {
+        res.redirect("/thanks");
+    }
+    else {
+        res.render("petition");
+    }
+})
 
 app.post("/petition", (req, res) => {
     console.log("POST petition was made");
     console.log("req.session",req.session);
     console.log("req.body", req.body);    
     const { first, last, signature} = req.body;
-   
-    db.updateUserData(first, last, signature)
-        .then(({rows})=>{
-            console.log('req.session.id: ', req.session.id);
-            req.session.id = rows[0].id;
-            req.session.registered == true;
-            res.redirect("/thanks");
-        })
-        .catch((err)=> {
-            console.log("error in updateUserData",err);
-            console.log('req.session: ', req.session);
-            res.redirect("/petition");
-        })
+
+    if(first == ""){
+        res.redirect("/petition");
+    }
+    else if(last == ""){
+        res.redirect("/petition");
+    }
+    else if(signature == ""){
+        res.redirect("/petition");
+    }
+    else  {
+        db.updateUserData(first, last, signature)
+            .then(({rows})=>{
+                console.log('rows: ', rows);
+                req.session.id = id;
+                req.session.signed = "true";
+                res.redirect("/thanks");
+            })
+            .catch((err)=> {
+                console.log("error in updateUserData",err);
+                console.log('req.session: ', req.session);
+                res.redirect("/petition");
+            })
+    }    
 });
 
 app.get("/thanks", (req, res) => {
     console.log("user requesting GET / thanks");
-    if(!req.session.registered){
-        res.render("petition",{
-            layout: "main",
-        });
+    if(req.session.signed != "true"){
+        res.redirect("/petition");
     }
-    else {
-        db.totalSigners()
-            .then(({rows})=>{
+    else {   
+        db.getSignature(req.session.id)       
+            .then(({rows}) =>{
                 console.log("rows", rows[0])
-                let registered = rows[0].count;
-
-                res.render("thanks",{
-                    layout: "main",
-                    })
-
-        });
-    }
-
-});
+                const signature = rows[0].signature;
+                db.totalSigners()
+                    .then(({rows})=>{
+                        const countSigners = rows[0].count;
+                        res.render("thanks",
+                            {signature, countSigners});  
+                    }) 
+            })
+            .catch((err) => {
+                console.log("Error showSig", err)
+            });
+        }
+    });
 
 app.get("/signers", (req, res) => {
     console.log("user requesting GET / signers");
     const { first, last} = req.body;
-    if(!req.session.registered){
-        res.render("petition",{
-            layout: "main",
-        });
+    if(req.session.signed != "true"){
+        res.redirect("/petition");
     }
     else {
         db.allSignersNames(first, last)
@@ -125,7 +126,7 @@ app.get("/signers", (req, res) => {
                 console.log("result from allSignersNames:", rows);
 
                 res.render("signers",{
-                    layout: "main",
+                    rows
                 });
             })
             .catch((err) => {
@@ -134,26 +135,5 @@ app.get("/signers", (req, res) => {
     }
 });
 
-
-// app.get("./actors", (req, res)=>{
-//     db.getActors().then((result)=> {
-//         console.log("result from getActors", result.rows);
-//         res.sendStatus(200);
-//     })
-//     .catch((err)=>{
-//         console.log("error in db.actors", err);
-//     })
-// })
-
-// app.post("/add-actor",(req, res) => {
-//     db.addActor("Julia", 35, 2)
-//        .then(()=> {
-//            console.log("yay worked");
-//            res.sendStatus(200);
-//        })
-//        .catch((err) => {
-//            console.log("error in db.addActor", err)
-//        });
-// })
 
 app.listen(8080, ()=> console.log("petition server is listening"));
