@@ -1,8 +1,10 @@
 <div class="container">
     <div class="info signers">
         <p>We the undersigned</p>
-        {{#if}}
-        <p>{{rows}}</p>
-        {{/if}}
+
+        {{#rows}}
+        <p>{{this.first}} {{this.last}}</p>
+        {{/rows}}
+
     </div>
 </div>
