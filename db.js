@@ -6,25 +6,25 @@ module.exports.getUserdata = () => {
 };
 
 module.exports.updateUserData = (firstName, lastName, signature) => {
-    const q = `INSERT INTO petition (first, last, signature) VALUES ($1, $2, $3)`;
+    const q = `INSERT INTO petition (first, last, signature) VALUES ($1, $2, $3)
+    RETURNING id`;
     const params = [firstName, lastName, signature];
     return db.query(q, params);    
 };
 
-module.exports.allSigners =(firstName, lastName)=> {
-    const q = `SELECT (first,last) FROM petition`;
-    // const params = [firstName, lastName];
-    return db.query(q); 
+module.exports.allSignersNames =()=> {
+    return db.query(
+        `SELECT first,last FROM petition`
+    ); 
 };
 
-module.exports.totalSigners =(id) => {
-    const q = `SELECT COUNT FROM petition (id) VALUES ($1)`;
-    const params = [id];
-    return db.query(q, params);
+module.exports.totalSigners =() => {
+    const q = `SELECT COUNT(*) FROM petition`;
+    return db.query(q);
 
 }
-exports.ifSigned = id => {
-    const q = `SELECT FROM signatures WHERE (id) VALUES ($1)`;
+exports.getSignature = id => {
+    const q =   `SELECT signature FROM petition WHERE id = $1`;
     const params = [id];
     return db.query(q, params);
 };
