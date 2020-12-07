@@ -1,14 +1,17 @@
 const express = require("express");
 const app = express();
 const db = require("./db");
-// const cookieParser = require('cookie-parser');
 var cookieSession = require('cookie-session');
 const csurf = require('csurf');
+const { hash, compare } = require("./bc");
 
 
 const hb = require("express-handlebars");
 app.engine("handlebars", hb());
 app.set("view engine", "handlebars");
+
+let userId;
+let signed;
 
 app.use(cookieSession({
     secret: `I'm always angry.`,
@@ -21,7 +24,7 @@ app.use(
     })
 );
 
-app.use(csurf()); 
+app.use(csurf());
 
 app.use(function (req, res, next) {
     res.set("x-frame-options", "DENY");
@@ -29,7 +32,6 @@ app.use(function (req, res, next) {
     next();
 });
 
-// app.use(cookieParser());
 app.use(express.static("./public"));
 
 
@@ -43,20 +45,63 @@ app.use((req, res, next)=> {
 })
 
 app.get("/", (req,res) => {
-    console.log("--------------");
-    console.log(`req.session:`, req.session);
-    console.log("--------------");
-    res.redirect("petition");
-
+    if(req.session.signed == true) {
+        res.redirect("/login");
+    }
+    else {
+        res.redirect("/registration");
+    }
 });
 
+app.get("/registration", (req, res) => {
+    res.render("registration");
+});
+
+app.post("/registration", (req, res) => {
+    console.log("req.body: ", req.body);
+    console.log("req.session: ", req.session);
+    hash(req.body.password)
+        .then(result => {
+            hashed_password = result;
+            return hashed_password;
+        })
+        .then(result =>{
+            db.addUserRegData(
+                req.body.first_name,
+                req.body.last_name,
+                req.body.email,
+                hashed_password
+            )
+            .then(({ rows }) =>{
+                req.session.id = rows[0].id;
+                res.redirect("/petition");
+            })
+            .catch(error => {
+                res.render("registration", {error : true})
+        });
+    })
+});
+
+app.get("/login", (req, res) => {
+    res.render("login");
+});
+
+app.post("/login", (req, res)=> {
+    let email = req.body.email;
+    db.getHashedPassword(email)
+        .then(result => {
+            compare(req.body.password, result.rows[0].password)
+                .then()
+        })
+
+})
 
 app.get("/petition", (req,res)=> {
     if(req.session.signed == "true") {
         res.redirect("/thanks");
     }
     else {
-        res.render("petition");
+        res.render("/petition");
     }
 })
 
@@ -65,30 +110,19 @@ app.post("/petition", (req, res) => {
     console.log("req.session",req.session);
     console.log("req.body", req.body);    
     const { first, last, signature} = req.body;
-
-    if(first == ""){
-        res.redirect("/petition");
-    }
-    else if(last == ""){
-        res.redirect("/petition");
-    }
-    else if(signature == ""){
-        res.redirect("/petition");
-    }
-    else  {
+    
         db.updateUserData(first, last, signature)
             .then(({rows})=>{
                 console.log('rows: ', rows);
-                req.session.id = id;
+                req.session.id = rows[0].id;
                 req.session.signed = "true";
                 res.redirect("/thanks");
             })
-            .catch((err)=> {
-                console.log("error in updateUserData",err);
+            .catch((error)=> {
+                console.log("error in updateUserData",error);
                 console.log('req.session: ', req.session);
-                res.redirect("/petition");
-            })
-    }    
+                res.render("/petition", { error: true });
+            })   
 });
 
 app.get("/thanks", (req, res) => {
@@ -108,8 +142,9 @@ app.get("/thanks", (req, res) => {
                             {signature, countSigners});  
                     }) 
             })
-            .catch((err) => {
-                console.log("Error showSig", err)
+            .catch((error) => {
+                console.log("Error showSig", error);
+                res.render("/petition", { error: true });
             });
         }
     });
@@ -129,8 +164,9 @@ app.get("/signers", (req, res) => {
                     rows
                 });
             })
-            .catch((err) => {
-                console.log("Error from allSignersNames:", err);
+            .catch((error) => {
+                console.log("Error from allSignersNames:", error);
+                res.render("/petition", { error: true });
             })
     }
 });
