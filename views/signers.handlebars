@@ -2,13 +2,12 @@
 <div class="error">Oops... Sorry! Something went wrong!</div>
 {{/if}}
 
+<div class="petition">
+    <p>We the undersigned demand that the careless production and use of microplastic must end!</p>
+</div>
+
 <div class="container">
-    <div class="info signers">
-        <p>We all have undersigned</p>
-
-        {{#rows}}
-        <p>{{this.first}} {{this.last}}</p>
-        {{/rows}}
-
-    </div>
+    {{#rows}}
+    <p>{{this.first}} {{this.last}}</p>
+    {{/rows}}
 </div>

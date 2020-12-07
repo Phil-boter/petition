@@ -2,10 +2,13 @@
 <div class="error">Oops... Sorry! Something went wrong!</div>
 {{/if}}
 
+<div class="petition">
+    <h3>Thank you for signing this petition!</h3>
+</div>
+
 <div class="container">
-    <div class="content">
-        <h1>Thank you for signing this petition!</h1>
-        <a href="/signers">See all signers{{count}}</a>
-        <img class="sig-img" src="{{signature}}" alt="">
+    <div>
+        <img class="sig-img" src="{{signature}}" alt="your signature">
+        <p><a href="/signers">See all signers{{count}}</a></p>
     </div>
 </div>

@@ -17,23 +17,26 @@ body {
     text-align: center;
     background-color: white;
     box-shadow: 0 55px 35px -25px black;
-    margin-left: 2rem;
-    margin-right: 2rem;
-    margin-top: 2rem;
+    margin: 3rem 4rem 4rem 4rem;
 }
 .petition {
-    display: flex;
+    display: block;
     justify-content: center;
     text-decoration: none;
     color: rgb(85, 85, 85);
     font-size: 2rem;
-    border: 1px solid black;
+    /* border: 1px solid black; */
     margin: 0 auto;
     width: 100%;
 }
 
+.petition h3 {
+    font-size: 3rem;
+    margin: 1rem auto;
+}
+
 .container {
-    border: 1px solid blue;
+    /* border: 1px solid blue; */
     display: flex;
     justify-content: center;
     margin: 0 auto;
@@ -63,11 +66,13 @@ button {
     border-radius: 4px;
     cursor: pointer;
 }
+
+button:hover {
+    background-color: rgb(96, 96, 175);
+}
 form {
     margin-bottom: 3rem;
 }
-
-.petition {
-    font-size: 2.5rem;
-    margin: 1rem auto;
+.container a {
+    display: block;
 }
