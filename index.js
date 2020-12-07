@@ -10,8 +10,6 @@ const hb = require("express-handlebars");
 app.engine("handlebars", hb());
 app.set("view engine", "handlebars");
 
-let userId;
-let signed;
 
 app.use(cookieSession({
     secret: `I'm always angry.`,
@@ -58,8 +56,8 @@ app.get("/registration", (req, res) => {
 });
 
 app.post("/registration", (req, res) => {
-    console.log("req.body: ", req.body);
-    console.log("req.session: ", req.session);
+    console.log("req.body /register: ", req.body);
+    console.log("req.session /register: ", req.session);
     hash(req.body.password)
         .then(result => {
             hashed_password = result;
@@ -73,6 +71,7 @@ app.post("/registration", (req, res) => {
                 hashed_password
             )
             .then(({ rows }) =>{
+                console.log("rows addUser /register: ", rows)
                 req.session.id = rows[0].id;
                 res.redirect("/petition");
             })
@@ -87,50 +86,85 @@ app.get("/login", (req, res) => {
 });
 
 app.post("/login", (req, res)=> {
-    let email = req.body.email;
+    let id;
+    let email = req.body.email;   
     db.getHashedPassword(email)
-        .then(result => {
-            compare(req.body.password, result.rows[0].password)
-                .then()
+        .then(({ rows }) => {
+            let salt = rows[0].password;
+            let password = req.body.password;
+            let dataId = rows[0].id
+            console.log("password /login: ",password); // hashed password
+            console.log("req.body.password /login", salt); // plain password
+            let match = compare(password, salt);
+            id = dataId;
+            return match;
         })
-
+        .then(match => {
+            if(match){
+                db.getIfSigned(id)
+                    .then(({ rows })=> {
+                        console.log("signed rows: ", rows[0]);
+                        if(rows[0]) {
+                            req.session.signed = rows[0].user_id;
+                            res.redirect("/thanks");
+                        } 
+                        else if(!rows[0]) {
+                            res.redirect("/petition");   
+                        }
+                    })
+                    .catch(error => {
+                        console.log("error getIfSigned", error);
+                        res.render("login", { error: true});
+                    })
+            }
+            else {
+                res.render("login", { error: true});
+            }
+        })
+        .catch(error => {
+            console.log("error match", error);
+            res.render("login", {error: true})
+        })
 })
 
 app.get("/petition", (req,res)=> {
     if(req.session.signed == "true") {
-        res.redirect("/thanks");
-    }
-    else {
-        res.render("/petition");
+        db.getIfSigned(req.session.id)
+        .then(({rows}) => {
+            if(rows[0]) {
+                res.redirect("/thanks");
+            }
+            else {
+                res.render("petition");
+            }
+        })      
     }
 })
 
 app.post("/petition", (req, res) => {
     console.log("POST petition was made");
-    console.log("req.session",req.session);
-    console.log("req.body", req.body);    
-    const { first, last, signature} = req.body;
+    console.log("req.session",req.session.id);
+    console.log("req.body", req.body.signature);  
+    let signature = req.body.signature;
+    let userId = req.session.id; 
+    // const { user_id, signature} = req.body;// error first /last
     
-        db.updateUserData(first, last, signature)
+        db.updateUserData(userId, signature)
             .then(({rows})=>{
-                console.log('rows: ', rows);
+                console.log('rows petition/post: ', rows);
                 req.session.id = rows[0].id;
                 req.session.signed = "true";
                 res.redirect("/thanks");
             })
             .catch((error)=> {
                 console.log("error in updateUserData",error);
-                console.log('req.session: ', req.session);
-                res.render("/petition", { error: true });
+                console.log('req.session petition/post: ', req.session);
+                res.render("petition", { error: true });
             })   
 });
 
 app.get("/thanks", (req, res) => {
-    console.log("user requesting GET / thanks");
-    if(req.session.signed != "true"){
-        res.redirect("/petition");
-    }
-    else {   
+    console.log("user requesting GET / thanks"); 
         db.getSignature(req.session.id)       
             .then(({rows}) =>{
                 console.log("rows", rows[0])
@@ -146,7 +180,7 @@ app.get("/thanks", (req, res) => {
                 console.log("Error showSig", error);
                 res.render("/petition", { error: true });
             });
-        }
+        
     });
 
 app.get("/signers", (req, res) => {
