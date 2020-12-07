@@ -6,10 +6,10 @@ module.exports.getUserdata = () => {
 };
 
 // petition
-module.exports.updateUserData = (user_id, signature) => {
+module.exports.updateUserData = (userId, signature) => {
     const q = `INSERT INTO petition (user_id, signature) VALUES ($1, $2)
     RETURNING id`;
-    const params = [user_id, signature];
+    const params = [userId, signature];
     return db.query(q, params);    
 };
 
