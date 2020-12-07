@@ -1,0 +1,18 @@
+{{#if error}}
+<div class="error">Oops... Sorry! Something went wrong!</div>
+{{/if}}
+
+<h2>Login</h2>
+<form method="POST" id="login">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    <div class="row">
+        <p>Email</p>
+        <input type="text" name="email" value="" placeholder="E-Mail">
+    </div>
+    <div class="row">
+        <p>Password</p>
+        <input type="password" name="password" value="" placeholder="Password">
+    </div>
+    <button type="submit" name="submit">LOG IN</button>
+    <a href="/registration">Register</a>
+</form>

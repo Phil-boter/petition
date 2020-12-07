@@ -1,14 +1,12 @@
+{{#if error}}
+<div class="error">Oops... Sorry! Something went wrong!</div>
+{{/if}}
+
 <div class="container">
     <h1>Sign our Petition</h1>
 
     <form method="POST">
-        <label for="firstName">First name:</label>
         <input type="hidden" name="_csrf" value="{{csrfToken}}">
-        <input type="text" id="firstName" name="first">
-
-
-        <label for="lastName">Last name:</label>
-        <input type="text" id="lastName" name="last">
 
         <input type="hidden" name="signature" id="signature">
         <canvas width="500" height="150" id="canvas"></canvas>
