@@ -2,25 +2,35 @@
 <div class="error">Oops... Sorry! Something went wrong!</div>
 {{/if}}
 
-<form method="POST" id="registration">
-    <input type="hidden" name="_csrf" value="{{csrfToken}}">
-    <div class="row">
-        <p>First Name</p>
-        <input type="text" name="first_name" placeholder="First Name" value="">
-    </div>
-    <div class="row">
-        <p>Last Name</p>
-        <input type="text" name="last_name" placeholder="Last Name" value="">
-    </div>
-    <div class="row">
-        <p>Email</p>
-        <input type="email" name="email" placeholder="E-Mail" value="">
-    </div>
-    <div class="row">
-        <p>Password</p>
-        <input type="password" name="password" placeholder="Password" value="">
-    </div>
+<div class="petition">
+    <p>
+        Here goes the petition text, when something comes in mind!
+        But we won't get there without your support.
+        Join our campain today!
+    </p>
+</div>
+<div class="container">
+    <form method="POST" id="registration">
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
+        <div class="row">
+            <p>First Name</p>
+            <input type="text" name="first_name" placeholder="First Name" value="">
+        </div>
+        <div class="row">
+            <p>Last Name</p>
+            <input type="text" name="last_name" placeholder="Last Name" value="">
+        </div>
+        <div class="row">
+            <p>Email</p>
+            <input type="email" name="email" placeholder="E-Mail" value="">
+        </div>
+        <div class="row">
+            <p>Password</p>
+            <input type="password" name="password" placeholder="Password" value="">
+        </div>
 
-    <button type="submit" name="submit">SIGN UP</button>
-    <a href="/login">log in</a>
-</form>
+        <button type="submit" name="submit">SIGN UP</button>
+        <p>If you are already a member, please <a href="/login">log in</a></p>
+
+    </form>
+</div>
