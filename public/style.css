@@ -10,6 +10,12 @@ body {
     background-image: url(background-image.jpg);
     object-fit: cover;
 }
+
+.error {
+    margin: 1rem auto;
+    font-size: 1.5rem;
+}
+
 .main-container {
     display: flex;
     flex-wrap: wrap;
@@ -75,4 +81,18 @@ form {
 }
 .container a {
     display: block;
+}
+
+#signers {
+    flex-direction: column;
+    height: 60vh;
+    overflow: auto;
+    scrollbar-color: white rgb(92, 126, 12);
+    padding: 20px;
+}
+
+#signers li {
+    font-size: 18px;
+    margin: 8px auto;
+    color: rgb(200, 200, 200) !important;
 }
