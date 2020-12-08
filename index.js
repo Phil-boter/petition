@@ -140,7 +140,7 @@ app.get("/petition", (req,res)=> {
 
 app.post("/petition", (req, res) => {
     console.log("POST petition was made");
-    console.log("req.session",req.session.id);
+    // console.log("req.session",req.session.id);
     // console.log("req.body", req.body.signature);  
     let signature = req.body.signature;
     let userId = req.session.id; 
@@ -159,6 +159,16 @@ app.post("/petition", (req, res) => {
                 res.render("petition", { error: true });
             })   
 });
+
+app.get("/profile", (req, res) => {
+    console.log("GET profile was made");
+    res.render("profile");
+
+});
+
+app.post("/prpfile", (req, res)=> {
+    console.log("POST profile was made");
+})
 
 app.get("/thanks", (req, res) => {
     console.log("user requesting GET / thanks");

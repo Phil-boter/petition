@@ -1,0 +1,26 @@
+{{#if error}}
+<div class="error">Oops... Sorry! Something went wrong!</div>
+{{/if}}
+
+<div class="petition">
+    <p>Please tell us a little bit more about yourself.</p>
+</div>
+
+<div class="container">
+    <form method="POST" id="profile">
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
+        <div class="row">
+            <p>Age</p>
+            <input type="text" name="age" value="" placeholder="Age">
+        </div>
+        <div class="row">
+            <p>City</p>
+            <input type="text" name="city" value="" placeholder="City">
+        </div>
+        <div class="row">
+            <p>Homepage</p>
+            <input type="text" name="url" value="" placeholder="Homepage">
+        </div>
+        <button type="submit" name="submit">Submit</button>
+    </form>
+</div>
