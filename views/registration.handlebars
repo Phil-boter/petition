@@ -1,14 +1,16 @@
-{{#if error}}
-<div class="error">Oops... Sorry! Something went wrong!</div>
-{{/if}}
-
 <div class="petition">
     <p>
         Here goes the petition text, when something comes in mind!
         But we won't get there without your support.
         Join our campain today!
     </p>
+
+    {{#if error}}
+    <div class="error">Oops... Sorry! Something went wrong!</div>
+    {{/if}}
 </div>
+
+
 <div class="container">
     <form method="POST" id="registration">
         <input type="hidden" name="_csrf" value="{{csrfToken}}">

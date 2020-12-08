@@ -1,13 +1,25 @@
-{{#if error}}
-<div class="error">Oops... Sorry! Something went wrong!</div>
-{{/if}}
-
 <div class="petition">
+    <h3>Signers of the Petition</h3>
     <p>We the undersigned demand that the careless production and use of microplastic must end!</p>
+
+    {{#if error}}
+    <div class="error">Oops... Sorry! Something went wrong!</div>
+    {{/if}}
 </div>
 
-<div class="container">
-    {{#rows}}
-    <p>{{this.first}} {{this.last}}</p>
-    {{/rows}}
+
+<div class="container" id="signers">
+    {{#each arrSigners}}
+    <li>
+        {{#if url}}
+        <p><a href={{url}}>{{first}} {{last}}</a></p>
+        {{else}}
+        {{first}} {{last}}
+        {{/if}}
+        {{age}}
+        {{#if city}}
+        <p><a href="/signers/{{city}}">{{city}}</a></p>
+        {{/if}}
+    </li>
+    {{/each}}
 </div>

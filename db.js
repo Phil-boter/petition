@@ -6,16 +6,16 @@ module.exports.getUserdata = () => {
 };
 
 // petition
-module.exports.updateUserData = (userId, signature) => {
-    const q = `INSERT INTO petition (user_id, signature) VALUES ($1, $2)
+module.exports.addSignature = (signature, userId) => {
+    const q = `INSERT INTO petition (signature, user_id) VALUES ($1, $2)
     RETURNING id`;
-    const params = [userId, signature];
+    const params = [signature, userId];
     return db.query(q, params);    
 };
 
 module.exports.allSignersNames =()=> {
     return db.query(
-        `SELECT first,last FROM users`
+        `SELECT first, last FROM petition`
     ); 
 };
 
@@ -24,33 +24,52 @@ module.exports.totalSigners =() => {
     return db.query(q);
 
 }
-exports.getSignature = id => {
-    const q =   `SELECT signature FROM petition WHERE id = $1`;
-    const params = [id];
+module.exports.getSignature = userId => {
+    const q = `SELECT signature FROM petition WHERE user_id = $1`;
+    const params = [userId];
     return db.query(q, params);
 };
-exports.getIfSigned = id => {
-    const q =   `SELECT user_id FROM petition WHERE user_id = $1`;
-    const params = [id];
+module.exports.getIfSigned = userId => {
+    const q =   `SELECT id FROM petition WHERE user_id = $1`;
+    const params = [userId];
     return db.query(q, params);
 };
 
 
 // registration
-exports.addUserRegData = (first_name, last_name, email, hashed_password) => { 
+module.exports.addUserRegData = (first_name, last_name, email, hashed_password) => { 
     const q = `INSERT INTO users (first, last, email, password) VALUES ($1, $2, $3, $4) RETURNING id`;
     const params =  [first_name, last_name, email, hashed_password];
     return db.query(q, params);
 };
 
-exports.getSignatureImage = (user_id) => {
-    const q = `SELECT signature FROM petition WHERE user_id = $1`;
-    const params = [user_id];
-    return db.query();
-};
 
-exports.getHashedPassword = email =>{
+module.exports.getHashedPassword = email =>{
     const q = `SELECT password, id FROM users WHERE email = $1`;
     const params = [email];
+    return db.query(q, params);
+};
+
+// profile
+
+module.exports.addUserProfile = (age, city, url, userId)=> {
+    const q = `INSERT INTO user_profiles (age, city, url, user_id) VALUES ($1, $2, $3, $4)`;
+    const params = [age, city, url, userId];
+    return db.query(q, params);
+};
+
+module.exports.signerNames = () => {
+    const q = `SELECT users.first, users.last, user_profiles.age, user_profiles.city, user_profiles.url FROM users
+               LEFT JOIN user_profiles ON users.id = user_profiles.user_id
+               INNER JOIN petition ON users.id = petition.user_id`;
+    return db.query(q);
+};
+
+module.exports.getCity = (city) => {
+    const q =  `SELECT users.first, users.last, user_profiles.age, user_profiles.url FROM petition
+                LEFT JOIN users ON petition.user_id = users.id
+                JOIN user_profiles ON users.id = user_profiles.user_id
+                WHERE TRIM(LOWER(user_profiles.city)) = LOWER($1)`;
+    const params = [city];
     return db.query(q, params);
 };

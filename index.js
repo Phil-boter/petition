@@ -43,7 +43,7 @@ app.use((req, res, next)=> {
 })
 
 app.get("/", (req,res) => {
-    if(req.session.id) {
+    if(req.session.userId) {
         res.redirect("/login");
     }
     else {
@@ -52,71 +52,85 @@ app.get("/", (req,res) => {
 });
 
 app.get("/registration", (req, res) => {
+    // req.session.userId = null;
+    // req.session.signed = null;
     res.render("registration");
 });
 
 app.post("/registration", (req, res) => {
-    console.log("req.body /register: ", req.body);
-    console.log("req.session /register: ", req.session);
-    hash(req.body.password)
-        .then(result => {
-            hashed_password = result;
-            return hashed_password;
-        })
-        .then(result =>{
-            db.addUserRegData(
-                req.body.first_name,
-                req.body.last_name,
-                req.body.email,
-                hashed_password
-            )
-            .then(({ rows }) =>{
-                console.log("rows addUser /register: ", rows)
-                req.session.id = rows[0].id;
-                res.redirect("/petition");
+    // console.log("req.body /register: ", req.body);
+    // console.log("req.session /register: ", req.session);
+    if(req.body.first_name == "") {
+        res.render("registration", {error : true});
+    }
+    else if (req.body.last_name == ""){
+        res.render("registration", {error : true});
+    }
+    else if(req.body.email == ""){
+        res.render("registration", {error : true});
+    }
+    else if(req.body.password == ""){
+        res.render("registration", {error : true});
+    }
+    else {
+        hash(req.body.password)
+            .then((hashed_password)=>{
+                db.addUserRegData(
+                    req.body.first_name,
+                    req.body.last_name,
+                    req.body.email,
+                    hashed_password
+                )
+                .then(({ rows }) =>{
+                    console.log("rows addUser /register: ", rows)
+                    req.session.userId = rows[0].id;
+                    res.redirect("/profile");// change to profile
+                })
+                .catch(error => {
+                    console.log("error registration", error)
+                    res.render("registration", {error : true})
+                });
             })
-            .catch(error => {
+            .catch((error) => {
+                console.log("error registration", error)
                 res.render("registration", {error : true})
-        });
-    })
+            });
+    }
+
 });
 
 app.get("/login", (req, res) => {
+
     res.render("login");
 });
 
 app.post("/login", (req, res)=> {
-    let id;
+    if(req.body.email == ""){
+        res.render("login", { error: true});
+    }
+    else if(req.body.password == ""){
+        res.render("login", { error: true});
+    }
+    else {
     let email = req.body.email;   
     db.getHashedPassword(email)
         .then(({ rows }) => {
             // let salt = rows[0].password;
-            let password = req.body.password;
-            let dataId = rows[0].id
-            console.log("password /login: ",password); // hashed password
+            const userId = rows[0].id
             // console.log("req.body.password /login", salt); // plain password
-            let match = compare(password, rows[0].password);
-            id = dataId;
-            return match;
-        })
-        .then(match => {
-            if(match){
-                db.getIfSigned(id)
+            compare(req.body.password, rows[0].password)
+            .then((result)=>{
+            if(result){
+                req.session.userId = userId
+                db.getIfSigned(userId)                    
                     .then(({ rows })=> {
                         console.log("signed rows: ", rows[0]);
-                        if(rows[0] && rows[0].user_id) {
-                            req.session.signed = req.session.id;
-                            signed = true;
+                            req.session.userId = rows[0].id;
                             res.redirect("/thanks");
-                        } 
-                        else if(!rows[0]) {
-                            req.session.id = id;
-                            res.redirect("/petition");   
-                        }
                     })
                     .catch(error => {
                         console.log("error getIfSigned", error);
-                        res.render("login", { error: true});
+                        res.redirect("/petition");
                     })
             }
             else {
@@ -127,10 +141,12 @@ app.post("/login", (req, res)=> {
             console.log("error match", error);
             res.render("login", {error: true})
         })
+    })
+   }    
 })
 
 app.get("/petition", (req,res)=> {
-    if(req.session.signed) {
+    if(req.session.signed == "signed") {
         res.redirect("/thanks");
         }
     else {
@@ -140,24 +156,26 @@ app.get("/petition", (req,res)=> {
 
 app.post("/petition", (req, res) => {
     console.log("POST petition was made");
-    // console.log("req.session",req.session.id);
-    // console.log("req.body", req.body.signature);  
-    let signature = req.body.signature;
-    let userId = req.session.id; 
-    // const { user_id, signature} = req.body;// error first /last
-    
-        db.updateUserData(userId, signature)
+    console.log("req.session",req.session.id);
+    console.log("req.body", req.body.signature);  
+    const signature = req.body.signature;
+    if(signature) {
+        db.addSignature(req.body.signature, req.session.userId)
             .then(({rows})=>{
                 console.log('rows petition/post: ', rows);
-                req.session.id = rows[0].id;
-                req.session.signed = true;
+                req.session.sigId = rows[0].id;
+                req.session.signed = "signed";
                 res.redirect("/thanks");
             })
             .catch((error)=> {
-                console.log("error in updateUserData",error);
+                console.log("error in addSignature",error);
                 console.log('req.session petition/post: ', req.session);
                 res.render("petition", { error: true });
-            })   
+            })
+    }
+    else {
+        res.render("petition");
+    }           
 });
 
 app.get("/profile", (req, res) => {
@@ -166,56 +184,94 @@ app.get("/profile", (req, res) => {
 
 });
 
-app.post("/prpfile", (req, res)=> {
+app.post("/profile", (req, res)=> {
     console.log("POST profile was made");
+    let city = req.body.city;
+
+        if(
+            !req.body.url.startsWith("http://") || 
+            !req.body.url.startsWith("https://")
+        ) {
+            req.body.url = null; 
+        }
+        if (!req.body.age) {
+            req.body.age = null
+        }
+    db.addUserProfile(
+            req.body.age, 
+            req.body.city, 
+            req.body.url, 
+            req.session.userId
+        )
+        .then(() => {
+            res.redirect("/petition");
+        })
+        .catch((error) => {
+            console.log("error in app/post/ addUserProfile", error);
+            res.render("profile", {error: true});
+        })
 })
 
 app.get("/thanks", (req, res) => {
     console.log("user requesting GET / thanks");
-    if (!req.session.signed) {
+    if (req.session.signed != "signed") {
      res.redirect("/petition");
     }
     else { 
-        db.getSignature(req.session.id)       
-            .then(({rows}) =>{
-                console.log("rows /thanks", rows[0])
-                const signature = rows[0].signature;
-                db.totalSigners()
-                    .then(({rows})=>{
-                        const countSigners = rows[0].count;
-                        res.render("thanks",
-                            {signature, countSigners});  
-                    }) 
+        db.totalSigners()
+        .then(({rows})=> {
+        const countSigners = rows[0].count;
+            db.getSignature(req.session.userId)      
+                .then(({rows}) =>{
+                    const signature = rows[0].signature;
+                    console.log("rows /thanks", rows[0])
+                    res.render("thanks", {                       
+                            signature,
+                            countSigners
+                    });
             })
             .catch((error) => {
-                console.log("Error showSig", error);
-                res.render("/petition", { error: true });
-            });
+                console.log("Error getSignature", error);                
+            })
+        })
+        .catch((error) => {
+                console.log("Error totalSigners", error);
+        })
     }    
 });
 
 
 app.get("/signers", (req, res) => {
     console.log("user requesting GET / signers");
-    const { first, last} = req.body;
-    if(req.session.signed != "true"){
+    if(req.session.signed != "signed"){
         res.redirect("/petition");
     }
     else {
-        db.allSignersNames(first, last)
+        db.signerNames()
             .then(({rows}) => {
-                console.log("result from allSignersNames:", rows);
-
-                res.render("signers",{
-                    rows
+                console.log("result from signerNames:", rows);
+                res.render("signers", {
+                    arrSigners: rows
                 });
             })
             .catch((error) => {
-                console.log("Error from allSignersNames:", error);
-                res.render("/petition", { error: true });
+                console.log("Error from signerNames:", error);
+                res.redirect("/petition");
             })
     }
 });
-
+app.get("/signers/:city", (req, res)=> {
+    const { city } = req.params;
+    db.getCity(city)
+        .then(({rows}) => {
+            res.render("signers", {
+                layout:"main",
+                arrSigners: rows
+            });
+        })
+        .catch((error) => {
+            console.log("error signers/city", error);
+        });
+})
 
 app.listen(8080, ()=> console.log("petition server is listening"));

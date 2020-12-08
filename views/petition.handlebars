@@ -1,11 +1,12 @@
-{{#if error}}
-<div class="error">Oops... Sorry! Something went wrong!</div>
-{{/if}}
-
 <div class="petition">
     <h3>Sign our Petition</h3>
     <p>Thank you for signing our petition to make the world a little bit cleaner and healthier for everyone!</p>
+    {{#if error}}
+    <div class="error">Oops... Sorry! Something went wrong!</div>
+    {{/if}}
+
 </div>
+
 
 <div class="container">
     <form method="POST">
