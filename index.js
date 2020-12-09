@@ -212,7 +212,19 @@ app.post("/profile", (req, res)=> {
 
 app.get("/editprofile", (req, res)=>{
     console.log("user requesting GET / editprofile");
-    res.render("editprofile");
+    db.getDataForEdit(req.session.userId)
+        .then(({rows})=> {
+            arrData = rows;
+            res.render("editprofile",{
+                arrData
+                // userId,
+                // signed
+            });
+        })
+        .catch((error) => {
+            console.log("error get/ editProfile", error);
+        })
+ 
 })
 
 app.post("/editprofile", (req,res)=> {
