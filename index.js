@@ -210,6 +210,17 @@ app.post("/profile", (req, res)=> {
         })
 })
 
+app.get("/editprofile", (req, res)=>{
+    console.log("user requesting GET / editprofile");
+    res.render("editprofile");
+})
+
+app.post("/editprofile", (req,res)=> {
+    console.log("user requesting POST / editprofile");
+})
+
+
+
 app.get("/thanks", (req, res) => {
     console.log("user requesting GET / thanks");
     var signature; 

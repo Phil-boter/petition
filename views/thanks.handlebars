@@ -10,14 +10,19 @@
             {{#if signature}}
             <img class="signature" src="{{signature}}" alt="your signature">
             {{/if}}
-            <p><a href="/signers">See all signers{{countSigners}}</a></p>
+            <p class="logout">
+                <a href=" /signers">See all {{countSigners}} signers</a>
+            </p>
         </div>
 
     </div>
     <div class="logout">
-        <a href="/logout">LOGOUT</a>
+        <a href="/editprofile">Edit your Profile</a>
     </div>
-    <div id="delete-signature">
+    <div class="logout">
+        <a href="/logout">Logout</a>
+    </div>
+    <div class="delete-signature">
         <form action="/thank-you" method="POST">
             <button type="submit" name="submit">Delete your signature</button>
             <input type="hidden" name="_csrf" value="{{csrfToken}}">
