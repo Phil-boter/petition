@@ -10,11 +10,11 @@
 
 <div class="container">
     <form method="POST">
-        <input type="hidden" name="_csrf" value="{{csrfToken}}">
+
 
         <input type="hidden" name="signature" id="signature">
         <canvas width="500" height="150" id="canvas"></canvas>
-
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
         <button name="button">SUBMIT!</button>
     </form>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>

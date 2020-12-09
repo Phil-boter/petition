@@ -10,7 +10,7 @@
 
 <div class="container">
     <form method="POST" id="login">
-        <input type="hidden" name="_csrf" value="{{csrfToken}}">
+
         <div class="row">
             <p>Email</p>
             <input type="text" name="email" value="" placeholder="E-Mail">
@@ -19,6 +19,7 @@
             <p>Password</p>
             <input type="password" name="password" value="" placeholder="Password">
         </div>
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
         <button type="submit" name="submit">LOG IN</button>
         <p><a href="/registration">Register</a></p>
 

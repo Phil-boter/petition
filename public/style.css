@@ -41,6 +41,10 @@ body {
     margin: 1rem auto;
 }
 
+.body-container {
+    margin: 0 auto;
+}
+
 .container {
     /* border: 1px solid blue; */
     display: flex;
@@ -79,6 +83,7 @@ button:hover {
 form {
     margin-bottom: 3rem;
 }
+
 .container a {
     display: block;
 }
@@ -95,4 +100,19 @@ form {
     font-size: 18px;
     margin: 8px auto;
     color: rgb(200, 200, 200) !important;
+    list-style: none;
+}
+.logout {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 1rem auto;
+    background-color: rgb(134, 134, 218);
+    height: 1.5rem;
+}
+.logout a {
+    color: white;
+}
+.logout:hover {
+    background-color: rgb(96, 96, 175);
 }

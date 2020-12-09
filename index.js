@@ -115,17 +115,16 @@ app.post("/login", (req, res)=> {
     let email = req.body.email;   
     db.getHashedPassword(email)
         .then(({ rows }) => {
-            // let salt = rows[0].password;
             const userId = rows[0].id
-            // console.log("req.body.password /login", salt); // plain password
             compare(req.body.password, rows[0].password)
             .then((result)=>{
             if(result){
-                req.session.userId = userId
+                req.session.userId = userId;// modified last-- turn not tested
                 db.getIfSigned(userId)                    
                     .then(({ rows })=> {
                         console.log("signed rows: ", rows[0]);
-                            req.session.userId = rows[0].id;
+                            req.session.sigId = rows[0].id;// try sigID
+                            req.session.signed = "signed";
                             res.redirect("/thanks");
                     })
                     .catch(error => {
@@ -146,21 +145,21 @@ app.post("/login", (req, res)=> {
 })
 
 app.get("/petition", (req,res)=> {
-    if(req.session.signed == "signed") {
-        res.redirect("/thanks");
-        }
-    else {
+    // if(req.session.signed == "signed") {
+    //     res.redirect("/thanks");
+    //     }
+    // else {
         res.render("petition");
-    }  
+    // }  
 })
 
 app.post("/petition", (req, res) => {
     console.log("POST petition was made");
     console.log("req.session",req.session.id);
     console.log("req.body", req.body.signature);  
-    const signature = req.body.signature;
-    if(signature) {
-        db.addSignature(req.body.signature, req.session.userId)
+    const {signature} = req.body;
+    if(signature != "") {
+        db.addSignature(signature, req.session.userId)
             .then(({rows})=>{
                 console.log('rows petition/post: ', rows);
                 req.session.sigId = rows[0].id;
@@ -169,7 +168,6 @@ app.post("/petition", (req, res) => {
             })
             .catch((error)=> {
                 console.log("error in addSignature",error);
-                console.log('req.session petition/post: ', req.session);
                 res.render("petition", { error: true });
             })
     }
@@ -192,10 +190,10 @@ app.post("/profile", (req, res)=> {
             !req.body.url.startsWith("http://") || 
             !req.body.url.startsWith("https://")
         ) {
-            req.body.url = null; 
+            req.body.url = null; // here maybe "http://"+ req.body.url
         }
         if (!req.body.age) {
-            req.body.age = null
+            req.body.age = null;
         }
     db.addUserProfile(
             req.body.age, 
@@ -214,6 +212,7 @@ app.post("/profile", (req, res)=> {
 
 app.get("/thanks", (req, res) => {
     console.log("user requesting GET / thanks");
+    var signature; 
     if (req.session.signed != "signed") {
      res.redirect("/petition");
     }
@@ -223,7 +222,7 @@ app.get("/thanks", (req, res) => {
         const countSigners = rows[0].count;
             db.getSignature(req.session.userId)      
                 .then(({rows}) =>{
-                    const signature = rows[0].signature;
+                    signature = rows[0].signature;                    
                     console.log("rows /thanks", rows[0])
                     res.render("thanks", {                       
                             signature,
@@ -261,7 +260,12 @@ app.get("/signers", (req, res) => {
     }
 });
 app.get("/signers/:city", (req, res)=> {
+    console.log("user requesting GET / signers/city");
     const { city } = req.params;
+    if(req.session.signed != "signed"){
+        res.redirect("/petition");
+    }
+    else {
     db.getCity(city)
         .then(({rows}) => {
             res.render("signers", {
@@ -272,6 +276,13 @@ app.get("/signers/:city", (req, res)=> {
         .catch((error) => {
             console.log("error signers/city", error);
         });
+    }    
 })
+
+app.get("/logout", (req, res) => {
+    req.session = null;
+    res.redirect("/registration");
+})
+
 
 app.listen(8080, ()=> console.log("petition server is listening"));

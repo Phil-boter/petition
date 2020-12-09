@@ -13,7 +13,7 @@
 
 <div class="container">
     <form method="POST" id="registration">
-        <input type="hidden" name="_csrf" value="{{csrfToken}}">
+
         <div class="row">
             <p>First Name</p>
             <input type="text" name="first_name" placeholder="First Name" value="">
@@ -30,7 +30,7 @@
             <p>Password</p>
             <input type="password" name="password" placeholder="Password" value="">
         </div>
-
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
         <button type="submit" name="submit">SIGN UP</button>
         <p>If you are already a member, please <a href="/login">log in</a></p>
 

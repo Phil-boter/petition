@@ -4,14 +4,23 @@
     <div class="error">Oops... Sorry! Something went wrong!</div>
     {{/if}}
 </div>
+<div class="body-container">
+    <div class="container">
+        <div>
+            {{#if signature}}
+            <img class="signature" src="{{signature}}" alt="your signature">
+            {{/if}}
+            <p><a href="/signers">See all signers{{countSigners}}</a></p>
+        </div>
 
-
-
-<div class="container">
-    <div>
-        {{#if signature}}
-        <img class="signature" src="{{signature}}" alt="your signature">
-        {{/if}}
-        <p><a href="/signers">See all signers{{countSigners}}</a></p>
+    </div>
+    <div class="logout">
+        <a href="/logout">LOGOUT</a>
+    </div>
+    <div id="delete-signature">
+        <form action="/thank-you" method="POST">
+            <button type="submit" name="submit">Delete your signature</button>
+            <input type="hidden" name="_csrf" value="{{csrfToken}}">
+        </form>
     </div>
 </div>
