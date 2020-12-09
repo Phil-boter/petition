@@ -85,17 +85,3 @@ module.exports.getDataForEdit = (userId) => {
     const params = [userId];
     return db.query(q, params);
 };
-
-// SELECT first as first_name, last as last_name, email as mail, age as age_int, city as residence, homepage as url FROM signatures
-//         LEFT JOIN users
-//         ON users.id = signatures.user_id
-//         LEFT JOIN user_profiles
-//         ON users.id = user_profiles.user_id
-//         WHERE users.id
-
-//                         first: rows[0].first_name,
-//                 last: rows[0].last_name,
-//                 email: rows[0].mail,
-//                 age: rows[0].age_int,
-//                 city: rows[0].residence,
-//                 page: rows[0].url
