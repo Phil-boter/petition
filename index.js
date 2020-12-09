@@ -52,8 +52,6 @@ app.get("/", (req,res) => {
 });
 
 app.get("/registration", (req, res) => {
-    // req.session.userId = null;
-    // req.session.signed = null;
     res.render("registration");
 });
 
@@ -100,7 +98,6 @@ app.post("/registration", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-
     res.render("login");
 });
 
@@ -119,11 +116,11 @@ app.post("/login", (req, res)=> {
             compare(req.body.password, rows[0].password)
             .then((result)=>{
             if(result){
-                req.session.userId = userId;// modified last-- turn not tested
+                req.session.userId = userId;
                 db.getIfSigned(userId)                    
                     .then(({ rows })=> {
                         console.log("signed rows: ", rows[0]);
-                            req.session.sigId = rows[0].id;// try sigID
+                            req.session.sigId = rows[0].id;
                             req.session.signed = "signed";
                             res.redirect("/thanks");
                     })
@@ -178,36 +175,44 @@ app.post("/petition", (req, res) => {
 
 app.get("/profile", (req, res) => {
     console.log("GET profile was made");
-    res.render("profile");
-
+    if(typeof req.session.userId == "number"){
+        res.render("profile");
+    }
+    else {
+        res.redirect("/registration");
+    } 
 });
 
 app.post("/profile", (req, res)=> {
     console.log("POST profile was made");
-    let city = req.body.city;
 
-        if(
-            !req.body.url.startsWith("http://") || 
-            !req.body.url.startsWith("https://")
-        ) {
-            req.body.url = null; // here maybe "http://"+ req.body.url
-        }
-        if (!req.body.age) {
-            req.body.age = null;
-        }
-    db.addUserProfile(
-            req.body.age, 
-            req.body.city, 
-            req.body.url, 
-            req.session.userId
+    let { age, url, city} = req.body;
+    if (age == "") {
+        age = null;
+    }
+    if(
+        url.startsWith("http://") || 
+        url.startsWith("https://") ||
+        url == ""
         )
-        .then(() => {
-            res.redirect("/petition");
-        })
-        .catch((error) => {
-            console.log("error in app/post/ addUserProfile", error);
-            res.render("profile", {error: true});
-        })
+    {
+        db.addUserProfile(
+            age, 
+            city, 
+            url, 
+            req.session.userId
+            )
+            .then(({rows}) => {
+                res.redirect("/petition");
+            })
+            .catch((error) => {
+                console.log("error in app/post/ addUserProfile", error);
+                res.render("profile", {error: true});
+            })
+        }        
+    else {
+        res.render("profile", {error: true})
+    }
 })
 
 app.get("/editprofile", (req, res)=>{
@@ -217,8 +222,6 @@ app.get("/editprofile", (req, res)=>{
             arrData = rows;
             res.render("editprofile",{
                 arrData
-                // userId,
-                // signed
             });
         })
         .catch((error) => {
@@ -229,6 +232,44 @@ app.get("/editprofile", (req, res)=>{
 
 app.post("/editprofile", (req,res)=> {
     console.log("user requesting POST / editprofile");
+    const {first, last, age, url, city, email, password } = req.body;
+    if(password != ""){
+        hash(password)
+        .then(hashPassword)
+        db.updatePass(
+            first,
+            last,
+            email,
+            hashPassword,
+            req.session.userId
+        )
+        .then(()=>{
+            db.updateInfoPass(age, city, url, req.session.userId)
+            .then(()=> {
+                res.redirect("/thanks");
+            })
+            .catch((error) => {
+                console.log("error post/ editProfile updateInfo", error);
+            })
+        })        
+    }
+    else {
+        db.updateNoPass(
+            first,
+            last,
+            email,
+            req.session.userId
+        )
+        .then(()=>{
+            db.updateInfo(age, city, url, req.session.userId)
+            .then(()=> {
+                res.redirect("/thanks");
+            })
+            .catch((error) => {
+                console.log("error post/ editProfile updateInfo", error);
+            })
+        })
+    }
 })
 
 
@@ -302,10 +343,22 @@ app.get("/signers/:city", (req, res)=> {
     }    
 })
 
+app.post("/thanks", (req, res) => {
+    db.deleteSignature(req.session.userId)
+        .then(() => {
+            req.session.signed = null;
+            signed = false;
+            res.redirect("/petition");
+        })
+        .catch(error => {
+            console.log(error);
+        });
+});
+
 app.get("/logout", (req, res) => {
     req.session = null;
     res.redirect("/registration");
 })
 
 
-app.listen(8080, ()=> console.log("petition server is listening"));
+app.listen(process.env.PORT || 8080, ()=> console.log("petition server is listening"));
