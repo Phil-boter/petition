@@ -52,7 +52,12 @@ app.get("/", (req,res) => {
 });
 
 app.get("/registration", (req, res) => {
-    res.render("registration");
+    if(req.session.userId){
+        res.redirect("/login");
+    }
+    else {
+        res.render("registration");
+    }
 });
 
 app.post("/registration", (req, res) => {
@@ -252,10 +257,8 @@ app.post("/editprofile", (req,res)=> {
             db.updateInfo(
                 console.log("first",first),
                 console.log("last",last),
-                console.log("email",email),
-                console.log("first",first),
+                console.log("email",email),              
                 console.log("age",age),
-                console.log("last",last),
                 console.log("city",city),
                 console.log("url",url),
                 console.log("hashPassword",hashPassword),
@@ -268,7 +271,7 @@ app.post("/editprofile", (req,res)=> {
             ])        
         })           
         .then(()=> {
-            if(req.session.signed == userId){
+            if(req.session.sigId == userId){
                 res.redirect("/thanks");
             }
             else{
@@ -280,7 +283,11 @@ app.post("/editprofile", (req,res)=> {
         })             
     }
     else {
-        db.updateNoPass(
+        db.updateNoPass(                
+            console.log("first",first),
+            console.log("last",last),
+            console.log("email",email), 
+            console.log("userId",userId), 
             first || null,
             last || null,
             email || null,
@@ -288,6 +295,9 @@ app.post("/editprofile", (req,res)=> {
         )
         .then(()=>{
             db.updateInfo(
+                console.log("age",age),
+                console.log("city",city),
+                console.log("url",url),
                 age || null, 
                 city || null,
                 url || null,

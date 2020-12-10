@@ -78,8 +78,8 @@ module.exports.getCity = (city) => {
 
 module.exports.getDataForEdit = (userId) => {
     const q = `SELECT users.first, users.last, users.email, user_profiles.city, user_profiles.age, user_profiles.url
-               FROM user_profiles
-               LEFT JOIN users
+               FROM users
+               LEFT JOIN user_profiles
                ON users.id = user_profiles.user_id
                WHERE users.id = $1`;
     const params = [userId];
@@ -106,16 +106,8 @@ module.exports.updateInfo = (age, city, url, userId) => {
                VALUES ($1, $2, $3, $4)
                ON CONFLICT (user_id) 
                DO UPDATE SET age = ($1), city = ($2), url = ($3)`;
-    const params = [age, city , url , userId];
-    return db.query(q. params);    
-    // return db.query(
-    //     `UPDATE users    // return db.query(
-    //     `UPDATE users
-    //     SET first = $2, last = $3, email = $4
-    //     WHERE id = $1`,
-    //     [userId, first, last, email]
-    // );
-    // );
+    const params = [age , city , url , userId];
+    return db.query(q, params);    
 };
 
 exports.deleteSignature = userId => {
