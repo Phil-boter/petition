@@ -1,5 +1,5 @@
 const spicedPg = require('spiced-pg');
-const db = spicedPg('postgres:postgres:postgres@localhost:5432/petition');
+const db = spicedPg(process.env.DATABASE_URL || 'postgres:postgres:postgres@localhost:5432/petition');
 
 module.exports.getUserdata = () => {
     return db.query(`SELECT * FROM petition`);
@@ -83,5 +83,48 @@ module.exports.getDataForEdit = (userId) => {
                ON users.id = user_profiles.user_id
                WHERE users.id = $1`;
     const params = [userId];
+    return db.query(q, params);
+};
+
+module.exports.updateNoPass = (first, last, email, userId) => {
+    const q = `UPDATE users SET first = $1, last = $2, email =$3
+               WHERE id = $4`;
+    const params = [first, last, email, userId];
+    return db.query(q, params);
+};
+
+module.exports.updatePass = (first, last, email, hashPassword, userId) => {
+    const q = `UPDATE users SET first = $1, last = $2, email = $3, password = $4
+               WHERE id = $5`;
+    const params = [first, last, email, hashPassword, userId];
+    return db.query(q, params);
+};
+
+
+module.exports.updateInfo = (age, city, url, userId) => {
+    const q = `INSERT INTO user_profiles (age, city, url, user_id)
+               VALUES ($1, $2, $3, $4)
+               ON CONFLICT (user_id) 
+               DO UPDATE SET age = ($1), city = ($2), url = ($3)`;
+    const params = [age, city , url , userId];
+    return db.query(q. params);    
+    // return db.query(
+    //     `UPDATE users    // return db.query(
+    //     `UPDATE users
+    //     SET first = $2, last = $3, email = $4
+    //     WHERE id = $1`,
+    //     [userId, first, last, email]
+    // );
+    // );
+};
+
+exports.deleteSignature = userId => {
+    const q = `DELETE FROM petition WHERE user_id = $1`;
+    const params = [userId];
+    return db.query(q, params);
+};
+exports.newPass = (userId, hashPassword) => {
+    const q = `UPDATE users SET password = $2 WHERE id = $1`;
+    const params = [userId, hashPassword];
     return db.query(q, params);
 };

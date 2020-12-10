@@ -43,12 +43,12 @@ app.use((req, res, next)=> {
 })
 
 app.get("/", (req,res) => {
-    if(req.session.userId) {
-        res.redirect("/login");
-    }
-    else {
+    // if(req.session.userId) {
+    //     res.redirect("/login");
+    // }
+    // else {
         res.redirect("/registration");
-    }
+    // }
 });
 
 app.get("/registration", (req, res) => {
@@ -168,7 +168,7 @@ app.post("/petition", (req, res) => {
                 res.render("petition", { error: true });
             })
     }
-    else {
+    else { req.session.
         res.render("petition");
     }           
 });
@@ -233,35 +233,66 @@ app.get("/editprofile", (req, res)=>{
 app.post("/editprofile", (req,res)=> {
     console.log("user requesting POST / editprofile");
     const {first, last, age, url, city, email, password } = req.body;
+    const userId = req.session.userId;
+    console.log("userId", userId);
     if(password != ""){
         hash(password)
-        .then(hashPassword)
-        db.updatePass(
-            first,
-            last,
-            email,
-            hashPassword,
-            req.session.userId
-        )
-        .then(()=>{
-            db.updateInfoPass(age, city, url, req.session.userId)
-            .then(()=> {
+        .then(result =>{
+            let hashPassword = result;
+            return Promise.all([
+
+            db.updatePass(
+
+                first || null,
+                last || null,
+                email || null,
+                hashPassword || null,
+                userId
+            ),
+            db.updateInfo(
+                console.log("first",first),
+                console.log("last",last),
+                console.log("email",email),
+                console.log("first",first),
+                console.log("age",age),
+                console.log("last",last),
+                console.log("city",city),
+                console.log("url",url),
+                console.log("hashPassword",hashPassword),
+                console.log("userId",userId),
+                age || null, 
+                city || null, 
+                url || null, 
+                userId
+                ),
+            ])        
+        })           
+        .then(()=> {
+            if(req.session.signed == userId){
                 res.redirect("/thanks");
-            })
-            .catch((error) => {
+            }
+            else{
+                res.redirect("/petition");
+            }              
+        })
+        .catch((error) => {
                 console.log("error post/ editProfile updateInfo", error);
-            })
-        })        
+        })             
     }
     else {
         db.updateNoPass(
-            first,
-            last,
-            email,
-            req.session.userId
+            first || null,
+            last || null,
+            email || null,
+            userId
         )
         .then(()=>{
-            db.updateInfo(age, city, url, req.session.userId)
+            db.updateInfo(
+                age || null, 
+                city || null,
+                url || null,
+                userId
+            )
             .then(()=> {
                 res.redirect("/thanks");
             })
