@@ -262,7 +262,7 @@ app.post("/editprofile", (req,res)=> {
             ])        
         })           
         .then(()=> {
-            if(req.session.sigId == userId){
+            if(req.session.signed = "signed"){
                 res.redirect("/thanks");
             }
             else{
@@ -288,7 +288,7 @@ app.post("/editprofile", (req,res)=> {
                 userId
             )
             .then(()=> {
-                if(req.session.sigId == userId){
+                if(req.session.signed = "signed"){
                     res.redirect("/thanks");
                 }
                 else{

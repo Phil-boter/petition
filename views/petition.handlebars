@@ -1,6 +1,6 @@
 <div class="petition">
     <h3>Sign our Petition</h3>
-    <p>Thank you for signing our petition to make the world a little bit cleaner and healthier for everyone!</p>
+    <p>Thank you for signing our petition to support your local brewery!</p>
     {{#if error}}
     <div class="error">Oops... Sorry! Something went wrong!</div>
     {{/if}}
@@ -13,9 +13,11 @@
 
 
         <input type="hidden" name="signature" id="signature">
-        <canvas width="500" height="150" id="canvas"></canvas>
+        <canvas class="canvas" width="500" height="150" id="canvas"></canvas>
         <input type="hidden" name="_csrf" value="{{csrfToken}}">
-        <button name="button">SUBMIT!</button>
+        <div class="logout">
+            <button name="button">SUBMIT!</button>
+        </div>
     </form>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="script.js"></script>

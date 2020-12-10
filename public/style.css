@@ -1,5 +1,6 @@
 canvas {
     border: 1px solid black;
+    background-color: rgb(141, 141, 141);
 }
 body {
     box-sizing: border-box;
@@ -7,8 +8,13 @@ body {
     padding: 0;
     background-color: rgb(202, 202, 202);
     font-family: "Roboto", sans-serif;
-    background-image: url(background-image.jpg);
-    object-fit: cover;
+    background-image: url(beertop.jpg);
+    object-fit: contain;
+    color: rgb(240, 240, 240);
+}
+.img {
+    /* image: url(beertop.jpg); */
+    object-fit: contain;
 }
 
 .error {
@@ -21,27 +27,32 @@ body {
     flex-wrap: wrap;
     /* border: 1px solid red; */
     text-align: center;
-    background-color: white;
+    background-color: rgba(105, 105, 105, 0.6);
     box-shadow: 0 55px 35px -25px black;
     margin: 3rem 4rem 4rem 4rem;
+    color: rgb(240, 240, 240);
+    border-radius: 10px;
 }
 .petition {
     display: block;
     justify-content: center;
     text-decoration: none;
-    color: rgb(85, 85, 85);
+    color: rgb(240, 240, 240);
     font-size: 2rem;
     /* border: 1px solid black; */
     margin: 0 auto;
     width: 100%;
+    opacity: 1;
+    padding: 2rem;
 }
 
 .petition h3 {
     font-size: 3rem;
-    margin: 1rem auto;
+    margin-top: 1rem auto;
 }
 
 .body-container {
+    width: 100%;
     margin: 0 auto;
 }
 
@@ -50,28 +61,30 @@ body {
     display: flex;
     justify-content: center;
     margin: 0 auto;
-    width: 40%;
     top: 3rem;
 }
 .row {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
 }
 
 input {
+    position: relative;
     width: 100%;
-    padding: 12px 20px;
-    margin: 8px 0;
+    padding: 0.6rem 0.8rem;
+    margin: 0.3rem 0;
     display: inline-block;
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
 }
+
 button {
+    position: relative;
     width: 100%;
-    background-color: rgb(134, 134, 218);
-    color: white;
-    padding: 14px 20px;
-    margin: 8px 0;
+    background-color: rgb(0, 182, 0);
+    color: rgb(240, 240, 240);
+    padding: 1rem 1.2rem;
+    margin: 0.7rem 0;
     border: none;
     border-radius: 4px;
     cursor: pointer;
@@ -79,14 +92,16 @@ button {
 }
 
 button:hover {
-    background-color: rgb(96, 96, 175);
+    background-color: rgb(0, 218, 0);
 }
 form {
+    position: relative;
     margin-bottom: 3rem;
 }
 
 .container a {
     display: block;
+    color: black;
 }
 
 #signers {
@@ -94,13 +109,17 @@ form {
     height: 60vh;
     overflow: auto;
     scrollbar-color: white rgb(92, 126, 12);
-    padding: 20px;
+    padding: 1rem;
+    opacity: 1;
+}
+.sign {
+    width: 100%;
 }
 
 #signers li {
-    font-size: 18px;
-    margin: 8px auto;
-    color: rgb(200, 200, 200) !important;
+    font-size: 1rem;
+    margin: 0.7rem auto;
+    color: white !important;
     list-style: none;
 }
 .logout {
@@ -108,19 +127,46 @@ form {
     justify-content: center;
     align-items: center;
     margin: 0 auto;
-    background-color: rgb(134, 134, 218);
+    background-color: rgb(0, 182, 0);
     height: 2.5rem;
-    margin-top: 1rem;
+    margin-top: 0.8rem;
     border-radius: 4px;
+    width: 50%;
+    margin-bottom: 1rem;
 }
 .logout a {
-    color: white;
+    color: rgb(240, 240, 240);
     text-decoration: none;
     font-size: 1.5rem;
 }
 .logout:hover {
-    background-color: rgb(96, 96, 175);
+    background-color: rgb(0, 218, 0);
 }
 .delete-signature {
-    margin-top: 0.5rem;
+    margin: 0.5rem auto;
+    width: 50%;
+}
+.canvas {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.beer-links {
+    display: block;
+    text-decoration: none;
+    color: black;
+}
+.beer-links:hover {
+    color: rgb(240, 240, 240);
+}
+
+@media (max-width: 650px) {
+    body {
+        background-image: url(hopstable.jpg);
+        background-position: center;
+    }
+    .logout a {
+        font-size: 1.2rem;
+    }
 }

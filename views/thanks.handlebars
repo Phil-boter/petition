@@ -6,18 +6,18 @@
 </div>
 <div class="body-container">
     <div class="container">
-        <div>
+        <div class="sign">
             {{#if signature}}
-            <img class="signature" src="{{signature}}" alt="your signature">
+            <img class="canvas" src="{{signature}}" alt="your signature">
             {{/if}}
-            <p class="logout">
-                <a href=" /signers">See all {{countSigners}} signers</a>
-            </p>
+            <div class="logout">
+                <a href="/signers">See all {{countSigners}} signers</a>
+            </div>
         </div>
-
     </div>
+
     <div class="logout">
-        <a href="/editprofile">Edit your Profile</a>
+        <a href="/editprofile">Edit Profile</a>
     </div>
     <div class="logout">
         <a href="/logout">Logout</a>
