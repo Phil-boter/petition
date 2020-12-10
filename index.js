@@ -247,7 +247,6 @@ app.post("/editprofile", (req,res)=> {
             return Promise.all([
 
             db.updatePass(
-
                 first || null,
                 last || null,
                 email || null,
@@ -255,14 +254,6 @@ app.post("/editprofile", (req,res)=> {
                 userId
             ),
             db.updateInfo(
-                console.log("first",first),
-                console.log("last",last),
-                console.log("email",email),              
-                console.log("age",age),
-                console.log("city",city),
-                console.log("url",url),
-                console.log("hashPassword",hashPassword),
-                console.log("userId",userId),
                 age || null, 
                 city || null, 
                 url || null, 
@@ -284,10 +275,6 @@ app.post("/editprofile", (req,res)=> {
     }
     else {
         db.updateNoPass(                
-            console.log("first",first),
-            console.log("last",last),
-            console.log("email",email), 
-            console.log("userId",userId), 
             first || null,
             last || null,
             email || null,
@@ -295,16 +282,18 @@ app.post("/editprofile", (req,res)=> {
         )
         .then(()=>{
             db.updateInfo(
-                console.log("age",age),
-                console.log("city",city),
-                console.log("url",url),
                 age || null, 
                 city || null,
                 url || null,
                 userId
             )
             .then(()=> {
-                res.redirect("/thanks");
+                if(req.session.sigId == userId){
+                    res.redirect("/thanks");
+                }
+                else{
+                    res.redirect("/petition");
+                }   
             })
             .catch((error) => {
                 console.log("error post/ editProfile updateInfo", error);
