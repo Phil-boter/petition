@@ -210,7 +210,7 @@ app.post("/profile", (req, res)=> {
     {
         db.addUserProfile(
             age, 
-            city, 
+            city.toLowerCase(), 
             url, 
             req.session.userId
             )
@@ -266,7 +266,7 @@ app.post("/editprofile", (req,res)=> {
             ),
             db.updateInfo(
                 age || null, 
-                city || null, 
+                city.toLowerCase() || null, 
                 url || null, 
                 userId
                 ),
@@ -294,7 +294,7 @@ app.post("/editprofile", (req,res)=> {
         .then(()=>{
             db.updateInfo(
                 age || null, 
-                city || null,
+                city.toLowerCase() || null,
                 url || null,
                 userId
             )
