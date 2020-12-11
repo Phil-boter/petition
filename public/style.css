@@ -176,4 +176,10 @@ form {
     .logout a {
         font-size: 1.2rem;
     }
+    .top-img {
+        width: 24%;
+    }
+    .petition {
+        font-size: 1.5rem;
+    }
 }
