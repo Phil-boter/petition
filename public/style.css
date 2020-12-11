@@ -8,8 +8,8 @@ body {
     padding: 0;
     background-color: rgb(202, 202, 202);
     font-family: "Roboto", sans-serif;
-    background-image: url(beertop.jpg);
-    object-fit: contain;
+    background-image: url(beer1.jpg);
+    object-fit: cover;
     color: rgb(240, 240, 240);
 }
 .img {
@@ -95,7 +95,7 @@ button:hover {
     background-color: rgb(0, 218, 0);
 }
 form {
-    position: relative;
+    /* position: relative; */
     margin-bottom: 3rem;
 }
 
@@ -106,11 +106,12 @@ form {
 
 #signers {
     flex-direction: column;
-    height: 60vh;
+    /* height: 70vh; */
     overflow: auto;
     scrollbar-color: white rgb(92, 126, 12);
     padding: 1rem;
     opacity: 1;
+    width: 60vh;
 }
 .sign {
     width: 100%;
@@ -119,8 +120,11 @@ form {
 #signers li {
     font-size: 1rem;
     margin: 0.7rem auto;
-    color: white !important;
+    color: black !important;
     list-style: none;
+    background-color: lightgray;
+    width: 100%;
+    border-radius: 4px;
 }
 .logout {
     display: flex;
