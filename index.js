@@ -5,6 +5,12 @@ var cookieSession = require('cookie-session');
 const csurf = require('csurf');
 const { hash, compare } = require("./bc");
 
+const {
+    requireSignature,
+    requireNoSignature,
+    requireLoggedOutUser,
+    requireLoggedInUser
+} = require("./middleware")
 
 const hb = require("express-handlebars");
 app.engine("handlebars", hb());
@@ -42,13 +48,13 @@ app.use((req, res, next)=> {
 
 })
 
-app.get("/", (req,res) => {
-    // if(req.session.userId) {
-    //     res.redirect("/login");
-    // }
-    // else {
+app.get("/",  (req,res) => {
+    if(req.session.userId) {
+        res.redirect("/login");
+    }
+    else {
         res.redirect("/registration");
-    // }
+    }
 });
 
 app.get("/registration", (req, res) => {
@@ -147,12 +153,12 @@ app.post("/login", (req, res)=> {
 })
 
 app.get("/petition", (req,res)=> {
-    // if(req.session.signed == "signed") {
-    //     res.redirect("/thanks");
-    //     }
-    // else {
-        res.render("petition");
-    // }  
+    if(typeof req.session.userId == "number"){
+        res.render("petition");    
+    }
+    else {
+        res.redirect("/registration");
+    }
 })
 
 app.post("/petition", (req, res) => {
@@ -160,22 +166,23 @@ app.post("/petition", (req, res) => {
     console.log("req.session",req.session.id);
     console.log("req.body", req.body.signature);  
     const {signature} = req.body;
-    if(signature != "") {
-        db.addSignature(signature, req.session.userId)
-            .then(({rows})=>{
-                console.log('rows petition/post: ', rows);
-                req.session.sigId = rows[0].id;
-                req.session.signed = "signed";
-                res.redirect("/thanks");
-            })
-            .catch((error)=> {
-                console.log("error in addSignature",error);
-                res.render("petition", { error: true });
-            })
-    }
-    else { req.session.
-        res.render("petition");
-    }           
+
+        if(signature != "") {
+            db.addSignature(signature, req.session.userId)
+                .then(({rows})=>{
+                    console.log('rows petition/post: ', rows);
+                    req.session.sigId = rows[0].id;
+                    req.session.signed = "signed";
+                    res.redirect("/thanks");
+                })
+                .catch((error)=> {
+                    console.log("error in addSignature",error);
+                    res.render("petition", { error: true });
+                })
+        }
+        else { req.session.
+            res.render("petition", { error: true });
+        }          
 });
 
 app.get("/profile", (req, res) => {
@@ -222,17 +229,21 @@ app.post("/profile", (req, res)=> {
 
 app.get("/editprofile", (req, res)=>{
     console.log("user requesting GET / editprofile");
-    db.getDataForEdit(req.session.userId)
-        .then(({rows})=> {
-            arrData = rows;
-            res.render("editprofile",{
-                arrData
-            });
-        })
-        .catch((error) => {
-            console.log("error get/ editProfile", error);
-        })
- 
+    if(typeof req.session.userId == "number"){
+        db.getDataForEdit(req.session.userId)
+            .then(({rows})=> {
+                arrData = rows;
+                res.render("editprofile",{
+                    arrData
+                });
+            })
+            .catch((error) => {
+                console.log("error get/ editProfile", error);
+            })
+    }
+    else {
+        res.redirect("/registration");
+    } 
 })
 
 app.post("/editprofile", (req,res)=> {
@@ -333,6 +344,17 @@ app.get("/thanks", (req, res) => {
     }    
 });
 
+app.post("/thanks", (req, res) => {
+    db.deleteSignature(req.session.userId)
+        .then(() => {
+            req.session.signed = null;
+            signed = false;
+            res.redirect("/petition");
+        })
+        .catch(error => {
+            console.log(error);
+        });
+});
 
 app.get("/signers", (req, res) => {
     console.log("user requesting GET / signers");
@@ -373,17 +395,7 @@ app.get("/signers/:city", (req, res)=> {
     }    
 })
 
-app.post("/thanks", (req, res) => {
-    db.deleteSignature(req.session.userId)
-        .then(() => {
-            req.session.signed = null;
-            signed = false;
-            res.redirect("/petition");
-        })
-        .catch(error => {
-            console.log(error);
-        });
-});
+
 
 app.get("/logout", (req, res) => {
     req.session = null;

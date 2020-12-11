@@ -8,9 +8,13 @@ body {
     padding: 0;
     background-color: rgb(202, 202, 202);
     font-family: "Roboto", sans-serif;
-    background-image: url(beer1.jpg);
+    background-image: url(beerbar.jpg);
     object-fit: cover;
     color: rgb(240, 240, 240);
+}
+
+.top-img {
+    width: 8%;
 }
 .img {
     /* image: url(beertop.jpg); */
@@ -59,7 +63,6 @@ body {
 .container {
     /* border: 1px solid blue; */
     display: flex;
-    justify-content: center;
     margin: 0 auto;
     top: 3rem;
 }
@@ -157,7 +160,7 @@ form {
 }
 
 .beer-links {
-    display: block;
+    display: inline-block;
     text-decoration: none;
     color: black;
 }
@@ -167,7 +170,7 @@ form {
 
 @media (max-width: 650px) {
     body {
-        background-image: url(hopstable.jpg);
+        background-image: url(beertop.jpg);
         background-position: center;
     }
     .logout a {

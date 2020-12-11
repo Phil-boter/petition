@@ -1,7 +1,8 @@
 <div class="petition">
+    <img class="top-img" src="dolde2.png" alt="hops">
     <p>
         Sign our petition for supporting your local brewery.
-        Due coronavirus many, espacillay small craftbeer breweries
+        Due to COVID-19 espacillay smaller breweries
         are badly hit! There will be
         <span>
             <a class="beer-links" href="https://itmustbeerlove.com/beer-in-berlin-coronavirus-pandemic/">ONE
@@ -9,13 +10,14 @@
         </span>
         even
         around your corner.
-        Here you can get more information about this.
+        Here you can get more information about this topic.
     </p>
     <div class="beer-links">
         <a class="beer-links"
-            href="https://www.latimes.com/world-nation/story/2020-04-20/virus-outbreak-threatens-germanys-tradition-laden-breweries">Click
-            Me</a>
-        <a class="beer-links" href="https://www.hopfenhelden.de/bier-und-corona-teil-1-arsch-auf-grundeis/">Click Me</a>
+            href="https://www.latimes.com/world-nation/story/2020-04-20/virus-outbreak-threatens-germanys-tradition-laden-breweries">beer
+            me</a>
+        <a>|</a>
+        <a class="beer-links" href="https://www.hopfenhelden.de/bier-und-corona-teil-1-arsch-auf-grundeis/">beer me</a>
     </div>
     {{#if error}}
     <div class="error">Oops... Sorry! Something went wrong!</div>
@@ -44,7 +46,7 @@
         </div>
         <input type="hidden" name="_csrf" value="{{csrfToken}}">
         <button type="submit" name="submit">SIGN UP</button>
-        <p>If you are already a member, please <a href="/login">log in</a></p>
+        <p>If you are already a member, please <a class="beer-links" href="/login">log in</a></p>
 
     </form>
 </div>
