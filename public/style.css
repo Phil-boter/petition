@@ -1,6 +1,6 @@
 canvas {
     border: 1px solid black;
-    background-color: rgb(141, 141, 141);
+    background-color: rgb(192, 192, 192);
 }
 body {
     box-sizing: border-box;
@@ -78,7 +78,7 @@ input {
     position: relative;
     width: 100%;
     padding: 0.6rem 0.8rem;
-    margin: 0.3rem 0;
+    margin: 0.1rem 0;
     display: inline-block;
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -152,7 +152,7 @@ form {
     height: 2.5rem;
     margin-top: 0.8rem;
     border-radius: 4px;
-    width: 50%;
+    width: 25%;
     margin-bottom: 1rem;
 }
 .logout a {
@@ -165,7 +165,7 @@ form {
 }
 .delete-signature {
     margin: 0.5rem auto;
-    width: 50%;
+    width: 25%;
 }
 .canvas {
     width: 100%;
@@ -175,13 +175,18 @@ form {
 
 .beer-links {
     display: inline-block;
-    text-decoration: none;
+    /* text-decoration: none; */
     color: black;
+    margin: 0.1rem;
 }
 .beer-links:hover {
     color: rgb(240, 240, 240);
 }
 
+.beer-links a {
+    font-size: 1.3rem;
+    color: rgb(240, 240, 240);
+}
 @media (max-width: 650px) {
     body {
         background-image: url(beertop.jpg);

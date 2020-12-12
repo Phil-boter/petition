@@ -153,7 +153,11 @@ app.post("/login", (req, res)=> {
 })
 
 app.get("/petition", (req,res)=> {
-    if(typeof req.session.userId == "number"){
+    console.log("signed",req.session.signed);
+    if(!req.session.userId) {
+        res.redirect("/registration")
+        }
+    else if(req.session.signed != "signed"){
         res.render("petition");    
     }
     else {
@@ -166,7 +170,7 @@ app.post("/petition", (req, res) => {
     console.log("req.session",req.session.id);
     console.log("req.body", req.body.signature);  
     const {signature} = req.body;
-
+ 
         if(signature != "") {
             db.addSignature(signature, req.session.userId)
                 .then(({rows})=>{
@@ -198,20 +202,31 @@ app.get("/profile", (req, res) => {
 app.post("/profile", (req, res)=> {
     console.log("POST profile was made");
 
-    let { age, url, city} = req.body;
-    if (age == "") {
-        age = null;
+    let {url, city} = req.body;
+    let age = null;
+    if (req.body.age) {
+        age = req.body.age;
     }
+    // if (city != "") {
+    //     city.toLowerCase();
+    // }
+    // if (city == "") {
+    //     city = null;
+    // }
+
+    let userUrl = url;
     if(
-        url.startsWith("http://") || 
-        url.startsWith("https://") ||
-        url == ""
-        )
-    {
+        url &&
+        (!url.startsWith("http://") || 
+        !url.startsWith("https://"))
+    ){
+        userUrl = "http://" + url; 
+        }
+         
         db.addUserProfile(
             age, 
             city.toLowerCase(), 
-            url, 
+            userUrl, 
             req.session.userId
             )
             .then(({rows}) => {
@@ -220,11 +235,11 @@ app.post("/profile", (req, res)=> {
             .catch((error) => {
                 console.log("error in app/post/ addUserProfile", error);
                 res.render("profile", {error: true});
-            })
-        }        
-    else {
-        res.render("profile", {error: true})
-    }
+        })
+        
+    // else {
+    //     res.render("profile", {error: true})
+    // }
 })
 
 app.get("/editprofile", (req, res)=>{
@@ -378,6 +393,7 @@ app.get("/signers", (req, res) => {
 app.get("/signers/:city", (req, res)=> {
     console.log("user requesting GET / signers/city");
     const { city } = req.params;
+    let selectedCity = city;
     if(req.session.signed != "signed"){
         res.redirect("/petition");
     }
@@ -386,6 +402,7 @@ app.get("/signers/:city", (req, res)=> {
         .then(({rows}) => {
             res.render("signers", {
                 layout:"main",
+                selectedCity,
                 arrSigners: rows
             });
         })
