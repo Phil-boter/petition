@@ -154,7 +154,7 @@ form {
     height: 2.5rem;
     margin-top: 0.8rem;
     border-radius: 4px;
-    width: 25%;
+    width: 40%;
     margin-bottom: 1rem;
 }
 .logout a {
@@ -167,7 +167,7 @@ form {
 }
 .delete-signature {
     margin: 0.5rem auto;
-    width: 25%;
+    width: 40%;
 }
 .canvas {
     width: 100%;
@@ -205,5 +205,11 @@ form {
     }
     #signers {
         width: 100%;
+    }
+    .delete-signature {
+        width: 60%;
+    }
+    .logout {
+        width: 60%;
     }
 }
