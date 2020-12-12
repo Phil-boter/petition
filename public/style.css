@@ -97,7 +97,9 @@ button {
     cursor: pointer;
     font-size: 1.5rem;
 }
-
+#button {
+    width: 80%;
+}
 button:hover {
     background-color: rgb(0, 218, 0);
 }
@@ -129,7 +131,7 @@ form {
     color: white;
     align-items: center;
     display: inline-flex;
-    justify-content: space-between;
+    justify-content: center;
     /* align-content: space-evenly; */
     font-size: 1rem;
     margin: 0.7rem auto;

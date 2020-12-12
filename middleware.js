@@ -12,7 +12,7 @@ exports.requireLoggedInUser = (req, res, next) => {
 };
 
 exports.requireLoggedOutUser = (req, res, next) => {
-    if(typeof req.session.userId == "number") {
+    if(req.session.id) {
         res.redirect("/petition");
     }
     else {
@@ -21,7 +21,7 @@ exports.requireLoggedOutUser = (req, res, next) => {
 };
 
 exports.requireSignature = (req, res, next) => {
-    if(req.session.signed = "signed") {
+    if(!req.session.signed) {
         res.redirect("/petition");
     }
     else {
@@ -30,7 +30,7 @@ exports.requireSignature = (req, res, next) => {
 };
 
 exports.requireNoSignature = (req, res, next) => {
-    if(req.session.signed != "signed") {
+    if(req.session.signed == true) {
         res.redirect("/thanks");
     }
     else {
