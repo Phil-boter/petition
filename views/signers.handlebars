@@ -1,8 +1,7 @@
 <div class="petition">
     <img class="top-img" src="/dolde2.png" alt="hops">
-    <h3>Signers of the Petition</h3>
-    <p>We the undersigned demand that people should buy beer at thier local brewery here in {{city}} instead buying
-        international!</p>
+    <h3>Signers of this Petition</h3>
+    <p>We in {{selectedCity}} who have signed this petition. Expect people to buy their beer at their local brewery!</p>
 
     {{#if error}}
     <div class="error">Oops... Sorry! Something went wrong!</div>
@@ -16,14 +15,17 @@
             {{#if url}}
             <p><a href={{url}}>{{first}} {{last}}</a></p>
             {{else}}
-            {{first}} {{last}}
+            <p>{{first}} {{last}}</p>
             {{/if}}
-            {{age}}
+            <span>{{age}}</span>
             {{#if city}}
             <p><a href="/signers/{{city}}">{{city}}</a></p>
             {{/if}}
         </li>
         {{/each}}
+    </div>
+    <div class="logout">
+        <a href="/editprofile">Edit Profile</a>
     </div>
 
     <div class="logout">

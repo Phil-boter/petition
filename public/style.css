@@ -33,7 +33,7 @@ body {
     text-align: center;
     background-color: rgba(105, 105, 105, 0.6);
     box-shadow: 0 55px 35px -25px black;
-    margin: 3rem 4rem 4rem 4rem;
+    margin: 2rem 3rem 1rem 3rem;
     color: rgb(240, 240, 240);
     border-radius: 10px;
 }
@@ -47,7 +47,7 @@ body {
     margin: 0 auto;
     width: 100%;
     opacity: 1;
-    padding: 2rem;
+    padding: 1.5rem;
 }
 
 .petition h3 {
@@ -68,6 +68,10 @@ body {
 }
 .row {
     font-size: 1.2rem;
+}
+.please-sign {
+    display: block;
+    font-size: 1.5rem;
 }
 
 input {
@@ -99,7 +103,7 @@ button:hover {
 }
 form {
     /* position: relative; */
-    margin-bottom: 3rem;
+    margin-bottom: 1rem;
 }
 
 .container a {
@@ -109,25 +113,35 @@ form {
 
 #signers {
     flex-direction: column;
+    color: white;
     /* height: 70vh; */
-    overflow: auto;
-    scrollbar-color: white rgb(92, 126, 12);
-    padding: 1rem;
+    /* overflow: auto; */
+    /* scrollbar-color: white rgb(92, 126, 12); */
+    padding: 0.5rem;
     opacity: 1;
-    width: 60vh;
+    width: 50%;
 }
 .sign {
     width: 100%;
 }
 
 #signers li {
+    color: white;
+    align-items: center;
+    display: inline-flex;
+    justify-content: space-between;
+    /* align-content: space-evenly; */
     font-size: 1rem;
     margin: 0.7rem auto;
-    color: black !important;
+    height: 2rem;
     list-style: none;
-    background-color: lightgray;
-    width: 100%;
+    background-color: rgba(105, 105, 105, 0.6);
+    width: 70%;
     border-radius: 4px;
+}
+#signers a {
+    color: white;
+    padding: 1rem;
 }
 .logout {
     display: flex;
@@ -181,5 +195,8 @@ form {
     }
     .petition {
         font-size: 1.5rem;
+    }
+    #signers {
+        width: 100%;
     }
 }
