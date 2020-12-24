@@ -2,7 +2,7 @@ exports.requireLoggedInUser = (req, res, next) => {
     if(
         !req.session.userId &&
         req.url != "/registration" &&
-        req.url !="/login"
+        req.url != "/login"
     ) {
         res.redirect("/registration");
     }
@@ -30,7 +30,7 @@ exports.requireSignature = (req, res, next) => {
 };
 
 exports.requireNoSignature = (req, res, next) => {
-    if(req.session.signed == true) {
+    if(req.session.sigId) {
         res.redirect("/thanks");
     }
     else {

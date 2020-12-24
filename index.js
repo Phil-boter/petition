@@ -182,6 +182,10 @@ app.post("/petition", (req, res) => {
     console.log("req.session",req.session.signed);
     // console.log("req.body", req.body.signature); 
     const {signature} = req.body;
+    // if(signature === ""){
+    //     res.redirect("/thanks");
+    // }
+    // else{
   
             db.addSignature(signature, req.session.userId)
                 .then(({rows})=>{
@@ -197,7 +201,7 @@ app.post("/petition", (req, res) => {
                     console.log("error in addSignature",error);
                     res.render("petition", { error: true });
                 })  
-                     
+            // }                 
 });
 
 app.get("/profile", (req, res) => {
@@ -228,11 +232,16 @@ app.post("/profile", (req, res)=> {
     let userUrl = url;
     if(
         url &&
-        (!url.startsWith("http://") || 
-        !url.startsWith("https://"))
+        url.startsWith("http://") || 
+        url.startsWith("https://")
     ){
-        userUrl = "http://" + url; 
-        }
+        console.log("url", userUrl)
+
+    }
+    else {       
+        userUrl = "http://" + url;
+        console.log("url if", userUrl) 
+    }
          
         db.addUserProfile(
             age, 
@@ -435,4 +444,8 @@ app.get("/logout", (req, res) => {
 })
 
 
-app.listen(process.env.PORT || 8080, ()=> console.log("petition server is listening"));
+// app.listen(process.env.PORT || 8080, ()=> console.log("petition server is listening"));
+
+if (require.main == module) {
+    app.listen(process.env.PORT || 8080, ()=> console.log("petition server is listening"))
+};
