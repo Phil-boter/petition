@@ -2,7 +2,7 @@
 SAVE YOUR LOCAL BREWERY is an online petition made with Express and Handlebars
 
 ## About
-    I built this project during my attendance to the Coding Bootcamp at Spiced Academy's in Berlin.
+    I builded this project during my attendance to the Coding Bootcamp at Spiced Academy's in Berlin.
 
     Users can sign up, sign in, logout. Draw and edit a signature on a canvas, edit their profile. 
     See other users who have signed and filtering them by city.
