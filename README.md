@@ -25,4 +25,4 @@ SAVE YOUR LOCAL BREWERY is an online petition made with Express and Handlebars
         # Start development server
         node .
 
-## Screenshots
+
