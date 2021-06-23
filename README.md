@@ -1,3 +1,4 @@
+![petition1](https://user-images.githubusercontent.com/68227335/123141654-e9397700-d458-11eb-8e4b-4467d8ea4b63.png)
 # Petition
 SAVE YOUR LOCAL BREWERY is an online petition made with Express and Handlebars
 
